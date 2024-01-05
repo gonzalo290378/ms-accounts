@@ -1,8 +1,8 @@
 package com.bench.msaccounts.controllers;
 
-import com.bench.msusers.dto.UserResponseDTO;
-import com.bench.msusers.model.User;
-import com.bench.msusers.service.impl.UserServiceImpl;
+import com.bench.msaccounts.dto.AccountResponseDTO;
+import com.bench.msaccounts.model.Account;
+import com.bench.msaccounts.service.impl.AccountServiceImpl;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,48 +11,47 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @Slf4j
-@RequestMapping("api/v1/users")
-public class UserController {
-
-    @Autowired
-    private UserServiceImpl userServiceImpl;
+@RequestMapping("api/v1/accounts")
+public class AccountController {
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private AccountServiceImpl accountServiceImpl;
 
     //CONFIG-SERVER
     @Value("${configuration.text}")
     private String text;
 
     @GetMapping()
-    public ResponseEntity<List<UserResponseDTO>> findAll() {
+    public ResponseEntity<List<AccountResponseDTO>> findAll() {
         log.info("Calling findAll with {}");
-        return ResponseEntity.ok(userServiceImpl.findAll());
+        return ResponseEntity.ok(accountServiceImpl.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> findById(@PathVariable(name = "id", required = true) Long id) {
+    public ResponseEntity<AccountResponseDTO> findById(@PathVariable(name = "id", required = true) Long id) {
         log.info("Calling findById with {}", id);
-        return ResponseEntity.ok(userServiceImpl.findById(id));
+        return ResponseEntity.ok(accountServiceImpl.findById(id));
     }
 
 
     @PostMapping()
-    public ResponseEntity<User> save(@RequestBody @Valid User user) {
-        log.info("Calling save with {}", user);
-        return ResponseEntity.ok(userServiceImpl.save(user));
+    public ResponseEntity<Account> save(@RequestBody @Valid Account account) {
+        log.info("Calling save with {}", account);
+        return ResponseEntity.ok(accountServiceImpl.save(account));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable(name = "id", required = true) Long id) {
-        userServiceImpl.delete(id);
+        accountServiceImpl.delete(id);
         log.info("Calling delete with {}", id);
         return ResponseEntity.ok("Successfully deleted");
     }
