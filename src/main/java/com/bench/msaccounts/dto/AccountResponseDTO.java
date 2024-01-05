@@ -12,21 +12,18 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDTO implements Serializable {
+public class AccountResponseDTO implements Serializable {
 
     @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("username")
-    private String username;
+    @JsonProperty("type")
+    private char type;
 
-    @JsonProperty("password")
-    private String password;
+    @JsonProperty("balance")
+    private Double balance;
 
-    @JsonProperty("email")
-    private String email;
-
-    @JsonProperty("dni")
-    private String dni;
+    @JsonProperty("state")
+    private Boolean state;
 
 }
