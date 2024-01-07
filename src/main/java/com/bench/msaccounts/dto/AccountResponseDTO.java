@@ -1,5 +1,6 @@
 package com.bench.msaccounts.dto;
 
+import com.bench.msaccounts.model.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,5 +26,11 @@ public class AccountResponseDTO implements Serializable {
 
     @JsonProperty("state")
     private Boolean state;
+
+    @JsonProperty("userId")
+    private Long userId;
+
+    @JsonProperty("userResponseDTO")
+    private User user;
 
 }
