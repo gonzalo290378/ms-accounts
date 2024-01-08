@@ -2,13 +2,17 @@ package com.bench.msaccounts.service;
 
 import com.bench.msaccounts.dto.AccountResponseDTO;
 import com.bench.msaccounts.model.Account;
+import com.bench.msaccounts.model.User;
 
 import java.util.List;
 
 public interface AccountService {
-    public AccountResponseDTO findById(Long id);
 
     public List<AccountResponseDTO> findAll();
+
+    public AccountResponseDTO findAccountById(Long id);
+
+    public User findUserById(Long id);
 
     public Account save(Account user);
 
