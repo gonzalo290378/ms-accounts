@@ -1,7 +1,9 @@
 package com.bench.msaccounts.controllers;
 
 import com.bench.msaccounts.dto.AccountResponseDTO;
+import com.bench.msaccounts.dto.UserResponseDTO;
 import com.bench.msaccounts.model.Account;
+import com.bench.msaccounts.model.User;
 import com.bench.msaccounts.service.impl.AccountServiceImpl;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +39,9 @@ public class AccountController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AccountResponseDTO> findById(@PathVariable(name = "id", required = true) Long id) {
-        log.info("Calling findById with {}", id);
-        return ResponseEntity.ok(accountServiceImpl.findById(id));
+    public ResponseEntity<AccountResponseDTO> findAccountById(@PathVariable(name = "id", required = true) Long id) {
+        log.info("Calling findAccountById with {}", id);
+        return ResponseEntity.ok(accountServiceImpl.findAccountById(id));
     }
 
 

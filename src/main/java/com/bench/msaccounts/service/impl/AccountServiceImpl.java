@@ -31,62 +31,35 @@ public class AccountServiceImpl implements AccountService {
     private RestTemplate restTemplate;
 
     @Transactional(readOnly = true)
-    public AccountResponseDTO findById(Long id) {
-        Account account = accountRepository.findById(id).orElseThrow(() ->
-                new AccountNotFoundException("id: " + id + " does not exist"));
-        return accountMapper.toDTO(account);
-    }
-
-
-    @Transactional(readOnly = true)
     public List<AccountResponseDTO> findAll() {
         List<User> userList = Arrays.asList(restTemplate.getForObject("http://localhost:8010/api/v1/users", User[].class));
-        List<AccountResponseDTO> accountList = accountRepository
-                .findAll()
+        List<AccountResponseDTO> accountList = accountRepository.findAll()
                 .stream()
                 .map(accountMapper::toDTO)
                 .collect(Collectors.toList());
-
-        for(AccountResponseDTO account: accountList){
-            User user = findUserById(userList, account.getUserId());
-            if (Objects.nonNull(user)) {
-                account.setUser(user);
-            }
-        }
-
-        return accountList;
-    }
-
-    private User findUserById(List<User> usersList, Long userId) {
-        for (User user : usersList) {
-            if (user.getId().equals(userId)) {
-                return user;
-            }
-        }
-        return null;
+        return findAccount(accountList, userList);
     }
 
 
     @Transactional(readOnly = true)
-    public List<AccountResponseDTO> findByUser() {
-//        List<User> userList = Arrays.asList(restTemplate.getForObject("http://localhost:8010/api/v1/users", User[].class));
-//        return userList.stream().map(user -> new Account();
-        return  null;
-
+    public AccountResponseDTO findAccountById(Long id) {
+        Account account = accountRepository.findById(id).orElseThrow(() ->
+                new AccountNotFoundException("id: " + id + " does not exist"));
+        User user = findUserById(account.getUserId());
+        AccountResponseDTO accountResponseDTO = accountMapper.toDTO(account);
+        return findAccount(Arrays.asList(accountResponseDTO), Arrays.asList(user)).get(0);
     }
+
+    @Transactional(readOnly = true)
+    public User findUserById(Long id) {
+        HashMap<String, Long> uriPathVariable = new HashMap<>();
+        uriPathVariable.put("id", id);
+        return restTemplate.getForObject("http://localhost:8010/api/v1/users/{id}", User.class, uriPathVariable);
+    }
+
 
     @Transactional(readOnly = false)
     public Account save(Account account) {
-//        if (accountRepository.findByUsername(user.getUsername()).isPresent()
-//                || userRepository.findByDni((user.getDni())).isPresent()) {
-//            throw new UserNotFoundException("Username/Dni was registered");
-//        }
-//        Account newAccount = new Account().builder()
-//                .type(account.getType())
-//                .balance(account.getBalance())
-//                .state(account.getState())
-//                .build();
-//        return accountRepository.save(newAccount);
         return null;
     }
 
@@ -98,4 +71,16 @@ public class AccountServiceImpl implements AccountService {
         }
         userRepository.delete(user.get());
     }
+
+    private List<AccountResponseDTO> findAccount(List<AccountResponseDTO> accountList, List<User> userList) {
+        for (AccountResponseDTO account : accountList) {
+            userList.stream()
+                    .filter(user -> Objects.equals(user.getId(), account.getUserId()))
+                    .peek(userResult -> account.setUser(userResult))
+                    .collect(Collectors.toList());
+        }
+        return accountList;
+    }
+
+
 }
