@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
+@Service("serviceRestTemplate")
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
@@ -32,7 +32,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional(readOnly = true)
     public List<AccountResponseDTO> findAll() {
-        List<User> userList = Arrays.asList(restTemplate.getForObject("http://localhost:8010/api/v1/users", User[].class));
+        List<User> userList = Arrays.asList(restTemplate.getForObject("http://localhost:8090/api/users/api/v1/users",
+                User[].class));
         List<AccountResponseDTO> accountList = accountRepository.findAll()
                 .stream()
                 .map(accountMapper::toDTO)
@@ -54,7 +55,8 @@ public class AccountServiceImpl implements AccountService {
     public User findUserById(Long id) {
         HashMap<String, Long> uriPathVariable = new HashMap<>();
         uriPathVariable.put("id", id);
-        return restTemplate.getForObject("http://localhost:8010/api/v1/users/{id}", User.class, uriPathVariable);
+        return restTemplate.getForObject("http://localhost:8090/api/users/api/v1/users/{id}",
+                User.class, uriPathVariable);
     }
 
 
@@ -81,6 +83,4 @@ public class AccountServiceImpl implements AccountService {
         }
         return accountList;
     }
-
-
 }

@@ -1,13 +1,12 @@
 package com.bench.msaccounts.controllers;
 
 import com.bench.msaccounts.dto.AccountResponseDTO;
-import com.bench.msaccounts.dto.UserResponseDTO;
 import com.bench.msaccounts.model.Account;
-import com.bench.msaccounts.model.User;
 import com.bench.msaccounts.service.impl.AccountServiceImpl;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,12 @@ public class AccountController {
     private Environment environment;
 
     @Autowired
+    @Qualifier("serviceRestTemplate")
     private AccountServiceImpl accountServiceImpl;
+
+    //LOAD BALANCER
+    @Value("${config.balanced.test}")
+    private String balancerTest;
 
     //CONFIG-SERVER
     @Value("${configuration.text}")
@@ -36,6 +40,15 @@ public class AccountController {
     public ResponseEntity<List<AccountResponseDTO>> findAll() {
         log.info("Calling findAll with {}");
         return ResponseEntity.ok(accountServiceImpl.findAll());
+    }
+
+    @GetMapping("/load-balancer")
+    public ResponseEntity<?> loadBalancer() {
+        log.info("Calling loadBalancer with {}");
+        Map<String, Object> response = new HashMap<>();
+        response.put("loadBalancer", balancerTest);
+        response.put("users", accountServiceImpl.findAll());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
