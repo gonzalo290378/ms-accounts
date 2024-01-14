@@ -7,6 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
     public AccountResponseDTO toDTO(Account account);
-
     public Account toModel(AccountResponseDTO accountResponseDTO);
 }

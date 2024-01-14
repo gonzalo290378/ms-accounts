@@ -2,6 +2,7 @@ package com.bench.msaccounts.dto;
 
 import com.bench.msaccounts.model.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class AccountResponseDTO implements Serializable {
     private Long id;
 
     @JsonProperty("type")
-    private char type;
+    private String type;
 
     @JsonProperty("balance")
     private Double balance;
