@@ -10,8 +10,8 @@ import java.util.Optional;
 public interface AccountService {
 
     public List<AccountResponseDTO> findAll();
-    public AccountResponseDTO findAccountById(Long id);
-    public User findUserById(Long id);
+    public AccountResponseDTO findByAccountNumber(Long id);
     public Account save(Account user);
     public void delete(Long id);
+
 }

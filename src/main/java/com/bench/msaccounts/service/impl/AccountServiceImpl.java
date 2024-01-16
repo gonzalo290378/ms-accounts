@@ -30,6 +30,7 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private RestTemplate restTemplate;
 
+
     @Transactional(readOnly = true)
     public List<AccountResponseDTO> findAll() {
         List<User> userList = Arrays.asList(restTemplate.getForObject("http://localhost:8090/ms-users/api/v1/users", User[].class));
@@ -40,9 +41,10 @@ public class AccountServiceImpl implements AccountService {
         return findAccount(accountList, userList);
     }
 
+
     @Transactional(readOnly = true)
-    public AccountResponseDTO findAccountById(Long id) {
-        Account account = accountRepository.findById(id).orElseThrow(() ->
+    public AccountResponseDTO findByAccountNumber(Long id) {
+        Account account = accountRepository.findByAccountNumber(id).orElseThrow(() ->
                 new AccountNotFoundException("id: " + id + " does not exist"));
         User user = findUserById(account.getUserId());
         AccountResponseDTO accountResponseDTO = accountMapper.toDTO(account);
@@ -68,7 +70,10 @@ public class AccountServiceImpl implements AccountService {
         try {
             findUserById(account.getUserId());
             if (isValidAccountType(account.getUserId(), account.getType())) {
+                Optional<Account> lastAccount = accountRepository.findLastAccountNumber();
+                Long lastAccountNumber = lastAccount.get().getAccountNumber() + 1;
                 Account newAccount = new Account().builder()
+                        .accountNumber(lastAccountNumber)
                         .type(account.getType())
                         .balance(account.getBalance())
                         .state(true)

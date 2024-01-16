@@ -2,7 +2,9 @@ package com.bench.msaccounts.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class UserResponseDTO {
+import java.io.Serializable;
+
+public class UserResponseDTO implements Serializable {
 
     @JsonProperty("id")
     private Long id;

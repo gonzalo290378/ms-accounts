@@ -21,6 +21,9 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "account_number")
+    private Long accountNumber;
+
     @Size(min = 2, message = "Type should have at least 2 characters")
     @Column(name = "type")
     private String type;
