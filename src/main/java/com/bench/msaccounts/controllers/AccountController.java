@@ -51,10 +51,10 @@ public class AccountController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<AccountResponseDTO> findAccountById(@PathVariable(name = "id", required = true) Long id) {
-        log.info("Calling findAccountById with {}", id);
-        return ResponseEntity.ok(accountServiceImpl.findAccountById(id));
+    @GetMapping("/{accountNumber}")
+    public ResponseEntity<AccountResponseDTO> findByAccountNumber(@PathVariable(name = "accountNumber", required = true) Long accountNumber) {
+        log.info("Calling findAccountById with {}", accountNumber);
+        return ResponseEntity.ok(accountServiceImpl.findByAccountNumber(accountNumber));
     }
 
 

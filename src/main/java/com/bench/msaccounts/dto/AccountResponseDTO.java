@@ -19,6 +19,9 @@ public class AccountResponseDTO implements Serializable {
     @JsonProperty("id")
     private Long id;
 
+    @JsonProperty("accountNumber")
+    private Long accountNumber;
+
     @JsonProperty("type")
     private String type;
 
