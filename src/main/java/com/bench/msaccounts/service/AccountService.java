@@ -13,5 +13,5 @@ public interface AccountService {
     public AccountResponseDTO findByAccountNumber(Long id);
     public Account save(Account user);
     public void delete(Long id);
-
-}
+    public Account update(Long id, Account account);
+    }
