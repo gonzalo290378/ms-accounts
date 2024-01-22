@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -95,6 +96,17 @@ public class AccountServiceImpl implements AccountService {
         }
         cancelledAccount.get().setState(false);
         accountRepository.save(cancelledAccount.get());
+    }
+
+
+    @Transactional(readOnly = false)
+    public Account update(Long id, Account account) {
+        Optional<Account> updatedAccount = accountRepository.findByAccountNumber(id);
+        if (!updatedAccount.isPresent()) {
+            throw new AccountNotFoundException("id: " + id + " does not exist");
+        }
+        updatedAccount.get().setBalance(account.getBalance());
+        return accountRepository.save(updatedAccount.get());
     }
 
     private List<AccountResponseDTO> findAccount(List<AccountResponseDTO> accountList, List<User> userList) {

@@ -65,6 +65,12 @@ public class AccountController {
         return ResponseEntity.ok(accountServiceImpl.save(account));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Account> update(@PathVariable("id") Long id, @RequestBody Account account) {
+        log.info("Calling save update {}", id);
+        return ResponseEntity.ok(accountServiceImpl.update(id, account));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable(name = "id", required = true) Long id) {
         accountServiceImpl.delete(id);
