@@ -18,7 +18,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,7 +63,12 @@ public class AccountServiceImpl implements AccountService {
     public User findUserById(Long id) {
         HashMap<String, Long> uriPathVariable = new HashMap<>();
         uriPathVariable.put("id", id);
-        return restTemplate.getForObject("http://localhost:8090/ms-users/api/v1/users/{id}", User.class, uriPathVariable);
+        HttpHeaders headers = new HttpHeaders();
+        String accessToken = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
+        headers.set(HttpHeaders.AUTHORIZATION, accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<User> response = restTemplate.exchange("http://localhost:8090/ms-users/api/v1/users/{id}", HttpMethod.GET, entity, User.class, uriPathVariable);
+        return response.getBody();
     }
 
     @Transactional(readOnly = false)
