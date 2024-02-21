@@ -8,19 +8,22 @@ import com.bench.msaccounts.model.User;
 import com.bench.msaccounts.repositories.AccountRepository;
 import com.bench.msaccounts.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("serviceRestTemplate")
 public class AccountServiceImpl implements AccountService {
-
-    @Autowired
-    private AccountRepository userRepository;
 
     @Autowired
     private AccountMapper accountMapper;
@@ -31,10 +34,15 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private RestTemplate restTemplate;
 
-
     @Transactional(readOnly = true)
     public List<AccountResponseDTO> findAll() {
-        List<User> userList = Arrays.asList(restTemplate.getForObject("http://localhost:8090/ms-users/api/v1/users", User[].class));
+        HttpHeaders headers = new HttpHeaders();
+        String accessToken = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
+        headers.set(HttpHeaders.AUTHORIZATION, accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<User[]> response = restTemplate.exchange("http://localhost:8090/ms-users/api/v1/users", HttpMethod.GET, entity, User[].class);
+        User[] usersArray = response.getBody();
+        List<User> userList = Arrays.asList(usersArray);
         List<AccountResponseDTO> accountList = accountRepository.findAll()
                 .stream()
                 .map(accountMapper::toDTO)

@@ -11,8 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class AccountController {
     private String text;
 
     @GetMapping()
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<AccountResponseDTO>> findAll() {
         log.info("Calling findAll with {}");
         return ResponseEntity.ok(accountServiceImpl.findAll());
@@ -53,6 +55,7 @@ public class AccountController {
     }
 
     @GetMapping("/{accountNumber}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<AccountResponseDTO> findByAccountNumber(@PathVariable(name = "accountNumber", required = true) Long accountNumber) {
         log.info("Calling findAccountById with {}", accountNumber);
         return ResponseEntity.ok(accountServiceImpl.findByAccountNumber(accountNumber));
@@ -60,18 +63,21 @@ public class AccountController {
 
 
     @PostMapping()
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Account> save(@RequestBody @Valid Account account) {
         log.info("Calling save with {}", account);
         return ResponseEntity.ok(accountServiceImpl.save(account));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Account> update(@PathVariable("id") Long id, @RequestBody Account account) {
         log.info("Calling save update {}", id);
         return ResponseEntity.ok(accountServiceImpl.update(id, account));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> delete(@PathVariable(name = "id", required = true) Long id) {
         accountServiceImpl.delete(id);
         log.info("Calling delete with {}", id);
@@ -89,6 +95,12 @@ public class AccountController {
             json.put("env", environment.getActiveProfiles()[0]);
         }
         return new ResponseEntity<Map<String, String>>(json, HttpStatus.OK);
+    }
+
+    @GetMapping("/authorized")
+    public Map<String, String> authorized(@RequestParam String code) {
+        log.info("Calling authorized with {}", code);
+        return Collections.singletonMap("code", code);
     }
 
 }
