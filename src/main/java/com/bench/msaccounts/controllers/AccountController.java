@@ -70,7 +70,7 @@ public class AccountController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Account> update(@PathVariable("id") Long id, @RequestBody Account account) {
         log.info("Calling save update {}", id);
         return ResponseEntity.ok(accountServiceImpl.update(id, account));
