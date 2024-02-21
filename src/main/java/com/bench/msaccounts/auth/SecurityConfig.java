@@ -23,7 +23,6 @@ public class SecurityConfig {
         http.authorizeHttpRequests((authHttp) -> authHttp
                         .requestMatchers("/authorized").permitAll()
                         .requestMatchers("/", "/static/**", "/index.html").permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/api/v1/users").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
