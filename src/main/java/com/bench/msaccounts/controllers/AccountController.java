@@ -3,6 +3,7 @@ package com.bench.msaccounts.controllers;
 import com.bench.msaccounts.dto.AccountResponseDTO;
 import com.bench.msaccounts.model.Account;
 import com.bench.msaccounts.service.impl.AccountServiceImpl;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,18 @@ public class AccountController {
         return ResponseEntity.ok(accountServiceImpl.findAll());
     }
 
+    @CircuitBreaker(name = "usersCircuitBreaker", fallbackMethod = "getUsers")
+    @GetMapping("/{accountNumber}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<AccountResponseDTO> findByAccountNumber(@PathVariable(name = "accountNumber", required = true) Long accountNumber) {
+        log.info("Calling findAccountById with {}", accountNumber);
+        return ResponseEntity.ok(accountServiceImpl.findByAccountNumber(accountNumber));
+    }
+
+    public ResponseEntity<AccountResponseDTO>  getUsers(Long accountNumber, Throwable e) {
+        return ResponseEntity.ok(new AccountResponseDTO(null, null, null, null, null, null, null));
+    }
+
     @GetMapping("/load-balancer")
     public ResponseEntity<?> loadBalancer() {
         log.info("Calling loadBalancer with {}");
@@ -52,13 +65,6 @@ public class AccountController {
         response.put("loadBalancer", balancerTest);
         response.put("users", accountServiceImpl.findAll());
         return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/{accountNumber}")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<AccountResponseDTO> findByAccountNumber(@PathVariable(name = "accountNumber", required = true) Long accountNumber) {
-        log.info("Calling findAccountById with {}", accountNumber);
-        return ResponseEntity.ok(accountServiceImpl.findByAccountNumber(accountNumber));
     }
 
 
