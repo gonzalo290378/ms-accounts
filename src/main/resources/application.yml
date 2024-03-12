@@ -21,3 +21,16 @@ spring:
         provider:
           spring:
             issuer-uri: "http://127.0.0.1:9000"
+
+
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 6
+      failureRateThreshold: 50
+      waitDurationInOpenState: 20s
+      permittedNumberOfCallsInHalfOpenState: 4
+  instances:
+    usersCircuitBreaker:
+      base-config: default

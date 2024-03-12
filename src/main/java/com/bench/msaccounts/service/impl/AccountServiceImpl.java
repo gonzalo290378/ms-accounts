@@ -52,6 +52,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional(readOnly = true)
     public AccountResponseDTO findByAccountNumber(Long id) {
+        //CircuitBreaker
+        if(id == 100011){
+            throw new AccountNotFoundException("No se encuentra la cuenta (CircuitBreaker)");
+        }
         Account account = accountRepository.findByAccountNumber(id).orElseThrow(() ->
                 new AccountNotFoundException("id: " + id + " does not exist"));
         User user = findUserById(account.getUserId());
